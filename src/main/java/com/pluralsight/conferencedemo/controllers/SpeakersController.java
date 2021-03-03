@@ -2,6 +2,7 @@ package com.pluralsight.conferencedemo.controllers;
 
 import com.pluralsight.conferencedemo.models.Session;
 import com.pluralsight.conferencedemo.models.Speaker;
+import com.pluralsight.conferencedemo.repositories.SessionRepository;
 import com.pluralsight.conferencedemo.repositories.SpeakerRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,39 +11,40 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/speakers")
+@RequestMapping("/api/v1/speakers")
 public class SpeakersController {
+
     @Autowired
-    private SpeakerRepository speakerRepository;
+    private SpeakerRepository repository;
 
     @GetMapping
     public List<Speaker> list() {
-        return speakerRepository.findAll();
+        return repository.list();
     }
 
     @GetMapping
     @RequestMapping("{id}")
     public Speaker get(@PathVariable Long id) {
-        return speakerRepository.getOne(id);
+        return repository.find(id);
     }
 
     @PostMapping
-    public Speaker create(@RequestBody final Speaker speaker) {
-        return speakerRepository.saveAndFlush(speaker);
+    public Speaker create(@RequestBody final Speaker speaker){
+        return repository.create(speaker);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @DeleteMapping
     public void delete(@PathVariable Long id) {
-        //Also need to check for children records before deleting.
-        speakerRepository.deleteById(id);
+        repository.delete(id);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    @PutMapping
     public Speaker update(@PathVariable Long id, @RequestBody Speaker speaker) {
-        //because this is a put we expect all values to be present. A PATCH would only need what fields have changed
-        // TODO Add checks that all values are passed in, otherwise return a 400 bad payload
-        Speaker existingSpeaker = speakerRepository.getOne(id);
-        BeanUtils.copyProperties(speaker, existingSpeaker, "speaker_id");
-        return speakerRepository.saveAndFlush(existingSpeaker);
+        //because this is a PUT, we expect all attributes to be passed in. A PATCH would only need what has changed.
+        //TODO: Add validation that all attributes are passed in, otherwise return a 400 bad payload
+        Speaker existingSpeaker = repository.find(id);
+        BeanUtils.copyProperties(speaker, existingSpeaker, "session_id");
+        return repository.update(speaker);
     }
+
 }

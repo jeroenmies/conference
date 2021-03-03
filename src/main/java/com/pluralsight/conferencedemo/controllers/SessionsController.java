@@ -1,47 +1,54 @@
 package com.pluralsight.conferencedemo.controllers;
 
 import com.pluralsight.conferencedemo.models.Session;
+import com.pluralsight.conferencedemo.models.Speaker;
 import com.pluralsight.conferencedemo.repositories.SessionRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/sessions")
+@RequestMapping("/api/v1/sessions")
 public class SessionsController {
     @Autowired
-    private SessionRepository sessionRepository;
+    private SessionRepository repository;
 
     @GetMapping
-    public List<Session> list() {
-        return sessionRepository.findAll();
+    public List<Session> list(@RequestParam(required = false) String name) {
+        if(name != null) {
+            return repository.getSessionsThatHaveName(name);
+        } else {
+            return repository.list();
+        }
     }
 
     @GetMapping
     @RequestMapping("{id}")
     public Session get(@PathVariable Long id) {
-        return sessionRepository.getOne(id);
+        return repository.find(id);
     }
 
     @PostMapping
-    public Session create(@RequestBody final Session session) {
-        return sessionRepository.saveAndFlush(session);
+    public Session create(@RequestBody final Session session){
+        return repository.create(session);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @DeleteMapping
     public void delete(@PathVariable Long id) {
-        //Also need to check for children records before deleting.
-        sessionRepository.deleteById(id);
+        repository.delete(id);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    @PutMapping
     public Session update(@PathVariable Long id, @RequestBody Session session) {
-        //because this is a put we expect all values to be present. A PATCH would only need what fields have changed
-        // TODO Add checks that all values are passed in, otherwise return a 400 bad payload
-        Session existingSession = sessionRepository.getOne(id);
+        //because this is a PUT, we expect all attributes to be passed in. A PATCH would only need what has changed.
+        //TODO: Add validation that all attributes are passed in, otherwise return a 400 bad payload
+        Session existingSession = repository.find(id);
         BeanUtils.copyProperties(session, existingSession, "session_id");
-        return sessionRepository.saveAndFlush(existingSession);
+        return repository.update(session);
     }
+
 }
