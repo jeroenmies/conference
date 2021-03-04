@@ -3,3 +3,8 @@ This is the Conference app built in
 by Dan Bunker
 
 To setup the database follow his tutorial and use his [example database project](https://github.com/dlbunker/ps-first-spring-boot-app)
+
+To start the database run
+```shell
+docker start postgres-demo
+```
