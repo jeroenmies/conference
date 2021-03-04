@@ -2,7 +2,6 @@ package com.pluralsight.conferencedemo.models;
 
 import com.pluralsight.conferencedemo.repositories.PricingCategoryRepository;
 import com.pluralsight.conferencedemo.repositories.TicketPriceJpaRepository;
-import com.pluralsight.conferencedemo.repositories.TicketPriceRepository;
 import com.pluralsight.conferencedemo.repositories.TicketTypeRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
