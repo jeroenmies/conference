@@ -8,9 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class SpeakerTest {
@@ -47,4 +49,15 @@ public class SpeakerTest {
         repository.deleteById(otherSpeaker.getSpeakerId());
     }
 
+    @Test
+    public void testJpaAnd() {
+        List<Speaker> speakers = repository.findByFirstNameAndLastName("Justin","Clark");
+        assertTrue(speakers.size() > 0);
+    }
+
+    @Test
+    public void testJpaOr() {
+        List<Speaker> speakers = repository.findByFirstNameOrLastName("Justin","Clark");
+        assertTrue(speakers.size() > 0);
+    }
 }
